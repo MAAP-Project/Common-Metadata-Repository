@@ -1,0 +1,158 @@
+{
+    "Software": {
+      "EntryTitle": "Software Sample 3",
+      "ShortName": "Soft 3",
+      "DOI": {
+        "DOI": "",
+        "Authority": ""
+      },
+      "Description": "Description for soft 3",
+      "FundingSource": "",
+      "Project": {
+        "ShortName": "",
+        "LongName": ""
+      },
+      "Downloads": "0",
+      "Publisher": "UAH",
+      "OtherDetails": "",
+      "Citation": ""
+    },
+    "Metadata": {
+      "Updated": "2020-10-08T16:00:00.000Z",
+      "Language": "English",
+      "Published": "2020-10-08T16:00:00.000Z"
+    },
+    "SoftwareDescription": {
+     "platform": "Platform 2",
+     "instrument": "Instrument 2",
+     "InputDataset": {},
+     "InputVariable": {
+       "Name": "",
+       "Description": "",
+       "AccessURL": {
+         "URL": "",
+         "Description": ""
+       }
+      },
+      "OutputDataset": {},
+      "OutputVariable": {
+        "Name": "",
+        "Description": "",
+        "AccessURL": {
+          "URL": "",
+          "Description": ""
+        }
+      },
+      "InteroperableSoftware": {
+        "Name": "",
+        "URL": "",
+        "Description": "",
+        "Workflow": {
+          "Name": "",
+          "Description": "",
+          "Step": ""
+        }
+      }
+    },
+    "Execute": {
+      "Access": {
+        "URL": "https://gitlab.com/Soft_3",
+        "Description": "Source code of Soft 3 is hosted in gitlab",
+        "LicenseURL": {
+          "URL": "",
+          "Protocol": "",
+          "Name": "",
+          "Description": ""
+        },
+        "Constraints": ""
+      },
+      "Install": {
+        "Documentation": "The recommended installation instructions are as follows: 1. Download and install Miniconda from https://conda.io/miniconda.html 2. Install Software and all its dependencies from our channel on the Anaconda Cloud On the command line: wget https://repo.anaconda.com/ bash Miniconda3-latest-Linux-x86_64.sh conda install -c plant plant",
+        "Language": "C++",
+        "Memory": "150 MB",
+        "OperatingSystem": "Microsoft Windows, Linux",
+        "InstallationTime": "0.0",
+        "Dependencies": "XServer if using macOS",
+        "AdditionalInformation": "Additional information"
+      },
+      "Run": {
+        "TestDescriptions": "",
+        "TestInstructions": "",
+        "TestData": "",
+        "TestDataDescription": "",
+        "TestMemory": "0.0",
+        "TestRunTimeDescription": "0.0",
+        "TestOutputDiskSpace": "0.0"
+      }
+    },
+    "SoftwareUsage": {
+      "Assumptions": "",
+      "Limitations": "",
+      "Type": "Clojure libarary",
+      "Provenance": ""
+    },
+    "Version": {
+      "Version": "1.0",
+      "ReleaseDate": "2020-10-08T00:00:00.000Z",
+      "Description": "The first release version",
+      "Supersedes": "",
+      "SupersededBy": ""
+    },
+    "Contact": {
+      "ContactPerson": {
+        "Roles": "Developer",
+        "FirstName": "Jay",
+        "MiddleName": "",
+        "LastName": "Mark",
+        "ContactInformation": {
+          "RelatedURL": "",
+          "ContactMechanism": {
+            "Type": "Email",
+            "Value": "jay@soft_3.com"
+          }
+        },
+        "UUID": "123"
+      },
+      "ContactGroup": {
+        "Roles": "Science Software Development",
+        "GroupName": "Software Development Team",
+        "ContactInformation": {
+          "RelatedURL": "",
+          "Mechanism": {
+            "Type": "Email",
+            "Value": "group.soft_3@sample.com"
+          }
+        },
+        "UUID": "123"
+      }
+    },
+    "RelatedURLs": [{
+      "URL": "https://sample.soft_3.com/",
+      "Description": "Users Guide for the software",
+      "URLContentType": "PublicationURL",
+      "Type": "View Related Information",
+      "Subtype": "User's Guide",
+      "size": "",
+      "language": "English"
+    },
+    {
+      "URL": "https://ieeexplore.ieee.org/document/sample",
+      "Description": "Technical paper describing the capabilities of the software and initial results obtained from the tools.",
+      "URLContentType": "PublicationURL",
+      "Type": "View Related Information",
+      "Subtype": "Publications",
+      "size": "",
+      "language": "English"
+    }
+    ],
+    "ScienceKeywords": [{
+      "Category": "EARTH SCIENCE",
+      "Topic": "LAND SURFACE",
+      "Term": "LAND USE/LAND COVER",
+      "VariableLevel1": "",
+      "VariableLevel2": "",
+      "VariableLevel3": "",
+      "DetailedVariable": ""
+    }
+    ]
+  }

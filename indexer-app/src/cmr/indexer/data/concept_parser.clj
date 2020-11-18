@@ -39,6 +39,10 @@
   [context concept]
   (umm/parse-metadata context concept))
 
+(defmethod parse-concept :software
+  [context concept]
+  (umm/parse-metadata context concept))
+  
 (defmethod parse-concept :subscription
   [context concept]
   (umm/parse-metadata context concept))

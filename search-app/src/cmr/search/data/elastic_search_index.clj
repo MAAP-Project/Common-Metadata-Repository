@@ -30,6 +30,10 @@
   "The alias to use for the collections index."
   {:default "collection_search_alias" :type String})
 
+(defconfig software-index-alias
+  "The alias to use for the software index."
+  {:default "software_search_alias" :type String})
+
 (defn- get-collections-moving-to-separate-index
   "Returns a list of collections that are currently in the process of moving to a separate index.
   Takes a map with the keyword of the collection as the key and the target index as the value.
@@ -156,6 +160,13 @@
                  (collections-index-alias))
    :type-name "collection"})
 
+(defmethod common-esi/concept-type->index-info :software
+  [context _ query]
+  {:index-name (if (:all-revisions? query)
+                 "1_all_software_revisions"
+                 (software-index-alias))
+   :type-name "software"})
+   
 (defmethod common-esi/concept-type->index-info :autocomplete
   [context _ query]
   {:index-name "1_autocomplete"

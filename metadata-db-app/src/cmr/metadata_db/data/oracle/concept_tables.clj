@@ -8,12 +8,13 @@
    [cmr.common.util :as cutil]
    [cmr.metadata-db.data.oracle.collection-table :as ct]
    [cmr.metadata-db.data.oracle.granule-table :as gt]
+   [cmr.metadata-db.data.oracle.software-table :as sw]
    [cmr.metadata-db.services.provider-validation :as pv]
    [inflections.core :as inf]))
 
 (def all-provider-concept-types
   "All the concept types that have tables for each (non-small) provider"
-  [:collection :granule])
+  [:collection :software :granule])
 
 (defmulti get-table-name
   "Get the name for the table for a given provider and concept-type"
@@ -68,6 +69,14 @@
   [_ _]
   "cmr_tool_associations")
 
+(defmethod get-table-name :software
+  [provider concept-type]
+  ;; Don't remove the next line - needed to prevent SQL injection
+  (pv/validate-provider provider)
+  (let [{:keys [provider-id small]} provider
+        db-provider-id (if small pv/small-provider-id provider-id)]
+    (format "%s_%s" (string/lower-case db-provider-id) (name concept-type))))
+
 (defmethod get-table-name :default
   [provider concept-type]
   ;; Don't remove the next line - needed to prevent SQL injection
@@ -97,6 +106,16 @@
                                  (ct/collection-column-sql provider)
                                  (ct/collection-constraint-sql provider table-name)))
     (ct/create-collection-indexes db provider table-name)))
+
+(defmethod create-concept-table :software
+  [db provider concept-type]
+  (let [table-name (get-table-name provider :software)]
+    (info "Creating table [" table-name "]")
+    (j/db-do-commands db (format "CREATE TABLE %s (%s, %s)"
+                                 table-name
+                                 (sw/software-column-sql provider)
+                                 (sw/software-constraint-sql provider table-name)))
+    (sw/create-software-indexes db provider table-name)))
 
 (defmethod create-concept-table :granule
   [db provider concept-type]

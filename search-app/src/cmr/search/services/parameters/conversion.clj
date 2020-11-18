@@ -97,6 +97,63 @@
    :tool-type :string
    :tool-concept-id :string})
 
+(defmethod common-params/param-mappings :software
+  [_]
+  {:concept-id :string
+   :native-id :string
+   :revision-date :multi-date-range
+   :provider :string
+   :created-at :multi-date-range
+   ;;Software
+   :entry-title :string
+   :short-name :string
+   :doi :string
+   :funding-source :string
+   :project-short-name :string
+   :project-long-name :string
+   :publisher :string
+   :citation :string
+   ;;Metadata
+   :update-time :multi-date-range
+   :language :string
+   :publish-time :multi-date-range
+   ;;Software Description
+   :platform :string
+   :instrument :string
+   ;:inputdataset :string
+   :inputvariable-name :string
+   ;:outputdataset :string
+   :outputvariable-name :string
+   :interoperable-software-name :string
+   :interoperable-software-workflow-name :string
+   ;;Execute
+   :license-name :string
+   :constraints :string
+   :install-documentation :string
+   :install-language :string
+   :install-version :string
+   :install-memory :string
+   :install-operatingsystem :string
+   :install-time :string
+   :install-dependency :string
+   ;;SoftwareUsage
+   :softwareusage-type :string
+   ;;Version
+   :version-id :string
+   :release-date :multi-date-range
+   :supersedes :string
+   :superseded-by :string          
+   ;;Contact
+   :contact-person-role :string
+   :contact-person-firstname :string
+   :contact-person-lastname :string
+   :contact-person-middlename :string
+   :contact-group-role :string
+   :contact-group-name :string
+   ;;ScienceKeywords
+   :science-keywords :science-keywords
+   })
+
 (defmethod common-params/param-mappings :granule
   [_]
   {:attribute :attribute
@@ -451,6 +508,38 @@
                  :echo-compatible? (= "true" (:echo-compatible params))
                  :all-revisions? (= "true" (:all-revisions params))
                  :simplify-shapefile? (when simplify-shapefile? simplify-shapefile?)
+                 :facets-size (:facets-size params)
+                 :result-options (merge (when-not (str/blank? (:include-tags params))
+                                          {:tags (map str/trim (str/split (:include-tags params) #","))})
+                                        (when (or begin-tag end-tag snippet-length num-snippets)
+                                          {:highlights
+                                           {:begin-tag begin-tag
+                                            :end-tag end-tag
+                                            :snippet-length (when snippet-length (Integer. snippet-length))
+                                            :num-snippets (when num-snippets (Integer. num-snippets))}}))})
+         util/remove-nil-keys)]))
+
+(defmethod common-params/parse-query-level-params :software
+  [concept-type params]
+  (let [[params query-attribs] (common-params/default-parse-query-level-params
+                                :software params lp/param-aliases)
+        {:keys [begin-tag end-tag snippet-length num-snippets]} (get-in params [:options :highlights])
+        result-features (concat 
+                                (when (= "v2" (util/safe-lowercase (:include-facets params)))
+                                    [:facets-v2])
+                                (when (= (:include-highlights params) "true")
+                                  [:highlights])
+                                )
+        keywords (when (:keyword params)
+                   (str/split (str/lower-case (:keyword params)) #" "))
+        params (if keywords (assoc params :keyword (str/join " " keywords)) params)]
+    [(dissoc params
+             :boosts :echo-compatible
+             :include-highlights :all-revisions :facets-size)
+     (-> query-attribs
+         (merge {:boosts (:boosts params)
+                 :result-features (seq result-features)
+                 :all-revisions? (= "true" (:all-revisions params))
                  :facets-size (:facets-size params)
                  :result-options (merge (when-not (str/blank? (:include-tags params))
                                           {:tags (map str/trim (str/split (:include-tags params) #","))})

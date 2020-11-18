@@ -28,6 +28,13 @@
           :umm-json :umm-json-results}
         (umm-versioned-result-formats :collection)))
 
+(defmethod cqv/supported-result-formats :software
+  [_]
+  (into #{:xml :json 
+          :umm-json :umm-json-results
+          }
+        (umm-versioned-result-formats :software)))
+        
 (defmethod cqv/supported-result-formats :granule
   [_]
   (into #{:xml, :json, :echo10, :atom, :iso19115, :csv, :kml, :native :timeline

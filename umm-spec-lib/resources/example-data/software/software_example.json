@@ -1,0 +1,163 @@
+{
+    "Software": {
+      "EntryTitle": "Polarimetric Interferometric Lab and Analysis Tool (beta version)",
+      "ShortName": "PLAnT (beta version)",
+      "DOI": {
+        "DOI": "",
+        "Authority": ""
+      },
+      "Description": "PLANT is a collection of software tools developed at the Jet Propulsion Laboratory to support processing and analysis of Synthetic Aperture Radar (SAR) data for ecosystem and land-cover/land-use change science and applications. PLANT inherits code components from the Interferometric Scientific Computing Environment (ISCE) to generate high-resolution, polarimetric-interferometric SLC stacks from Level-0 or Level-1 data for a variety of airborne and spaceborne sensors. The goal is to provide the ecosystem and land-cover/land-use change communities with rigorous and efficient tools to perform multi-temporal, polarimetric and tomographic analyses in order to generate calibrated, geocoded and mosaicked Level-2 and Level-3 products (e.g., maps of above-ground biomass or forest disturbance).",
+      "FundingSource": "",
+      "Project": {
+        "ShortName": "",
+        "LongName": ""
+      },
+      "Downloads": "0",
+      "Publisher": "California Institute of Technology",
+      "OtherDetails": "",
+      "Citation": ""
+    },
+    "Metadata": {
+      "Updated": "2020-09-10T16:00:00.000Z",
+      "Language": "English",
+      "Published": "2020-09-10T16:00:00.000Z"
+    },
+    "SoftwareDescription": {
+     "platform": "",
+     "instrument": "",
+     "InputDataset": {},
+     "InputVariable": {
+       "Name": "",
+       "Description": "",
+       "AccessURL": {
+         "URL": "",
+         "Description": ""
+       }
+      },
+      "OutputDataset": {},
+      "OutputVariable": {
+        "Name": "",
+        "Description": "",
+        "AccessURL": {
+          "URL": "",
+          "Description": ""
+        }
+      },
+      "InteroperableSoftware": {
+        "Name": "",
+        "URL": "",
+        "Description": "",
+        "Workflow": {
+          "Name": "",
+          "Description": "",
+          "Step": ""
+        }
+      }
+    },
+    "Execute": {
+      "Access": {
+        "URL": "https://gitlab.com/plant/plant",
+        "Description": "GitLab repository hosting the public version of the PLAnT software",
+        "LicenseURL": {
+          "URL": "",
+          "Protocol": "",
+          "Name": "",
+          "Description": ""
+        },
+        "Constraints": ""
+      },
+      "Install": {
+        "Documentation": "The recommended installation instructions are as follows: 1. Download and install Miniconda from https://conda.io/miniconda.html 2. Install PLAnT and all its dependencies from our channel on the Anaconda Cloud On the command line: wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh bash Miniconda3-latest-Linux-x86_64.sh conda install -c plant plant",
+        "Language": "Python",
+        "Memory": "38.5 MB",
+        "OperatingSystem": "macOS, Linux, Microsoft Windows",
+        "InstallationTime": "0.0",
+        "Dependencies": "XServer if using macOS",
+        "AdditionalInformation": "It is recommend that PLAnT be installed from the Anaconda Cloud channel. Additional installation instructions can be found on the software Readme https://gitlab.com/plant/plant/-/tree/stable"
+      },
+      "Run": {
+        "TestDescriptions": "",
+        "TestInstructions": "",
+        "TestData": "",
+        "TestDataDescription": "",
+        "TestMemory": "0.0",
+        "TestRunTimeDescription": "0.0",
+        "TestOutputDiskSpace": "0.0"
+      }
+    },
+    "SoftwareUsage": {
+      "Assumptions": "",
+      "Limitations": "",
+      "Type": "Python Tools",
+      "Provenance": ""
+    },
+    "Version": {
+      "Version": "0.1.40dev",
+      "ReleaseDate": "2020-04-16T00:00:00.000Z",
+      "Description": "Stable beta version of the public PLAnT library",
+      "Supersedes": "",
+      "SupersededBy": ""
+    },
+    "Contact": {
+      "ContactPerson": {
+        "Roles": "Enumeration",
+        "FirstName": "",
+        "MiddleName": "",
+        "LastName": "",
+        "ContactInformation": {
+          "RelatedURL": "",
+          "ContactMechanism": {
+            "Type": "Enumeration",
+            "Value": ""
+          }
+        },
+        "UUID": ""
+      },
+      "ContactGroup": {
+        "Roles": "Science Software Development",
+        "GroupName": "PLAnT Development Team",
+        "ContactInformation": {
+          "RelatedURL": "",
+          "Mechanism": {
+            "Type": "Email",
+            "Value": "plant@jpl.nasa.gov"
+          }
+        },
+        "UUID": ""
+      }
+    },
+    "RelatedURLs": [{
+      "URL": "https://plant.gitlab.io/plant/",
+      "Description": "Users Guide for the PLAnT software",
+      "URLContentType": "PublicationURL",
+      "Type": "View Related Information",
+      "Subtype": "User's Guide",
+      "size": "",
+      "language": "English"
+    },
+    {
+      "URL": "https://ieeexplore.ieee.org/document/7730395",
+      "Description": "Technical paper describing the capabilities of PLAnT and initial results obtained from the tools.",
+      "URLContentType": "PublicationURL",
+      "Type": "View Related Information",
+      "Subtype": "Publications",
+      "size": "",
+      "language": "English"
+    }
+    ],
+    "ScienceKeywords": [{
+      "Category": "EARTH SCIENCE",
+      "Topic": "LAND SURFACE",
+      "Term": "LAND USE/LAND COVER",
+      "VariableLevel1": "",
+      "VariableLevel2": "",
+      "VariableLevel3": "",
+      "DetailedVariable": ""
+    }
+    ]
+  }
+  
+  
+  
+  
+  

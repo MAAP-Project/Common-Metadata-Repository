@@ -94,6 +94,11 @@
                    batch)]
     (es/prepare-batch context (filter-expired-concepts batch) options)))
 
+(defmethod prepare-batch :software
+  [context batch options]
+    (es/prepare-batch context (filter-expired-concepts batch) options)
+  )
+
 (defmethod prepare-batch :variable
   [context batch options]
   ;; Get the variable associations as well.
@@ -175,6 +180,7 @@
   (or (not all-revisions-index?)
       (and all-revisions-index? (contains?
                                  #{:collection :tag-association
+                                   :software
                                    :variable :variable-association
                                    :service :service-association
                                    :tool :tool-association
@@ -443,6 +449,10 @@
     (get-elastic-version-with-associations
       context concept associations)))
 
+(defmethod get-elastic-version :software
+  [context concept]
+  (:transaction-id concept))
+  
 (defmethod get-elastic-version :variable
   [context concept]
   (let [variable-associations (meta-db/get-associations-for-variable context concept)]

@@ -91,7 +91,9 @@
         params {:concept-type :granule
                 :provider-id provider-id}
         concept-batches (db/find-concepts-in-batches db provider params (:db-batch-size system) start-index)
+        ;num-collections-all-rev (index/bulk-index {:system (helper/get-indexer system)} concept-batches {:all-revisions-index? true})
         num-granules (index/bulk-index {:system (helper/get-indexer system)} concept-batches {})]
+    ;(info "Indexed" num-collections-all-rev "collection(s) for provider (all-revisions)" provider-id)
     (info "Indexed" num-granules "granule(s) for provider" provider-id)
     num-granules))
 
@@ -103,9 +105,25 @@
         params {:concept-type :collection
                 :provider-id provider-id}
         concept-batches (db/find-concepts-in-batches db provider params (:db-batch-size system))
+        num-collections-all-rev (index/bulk-index {:system (helper/get-indexer system)} concept-batches {:all-revisions-index? true})
         num-collections (index/bulk-index {:system (helper/get-indexer system)} concept-batches {})]
+    (info "Indexed" num-collections-all-rev "collection(s) for provider (all-revisions)" provider-id)
     (info "Indexed" num-collections "collection(s) for provider" provider-id)
     num-collections))
+
+(defn- index-provider-software
+  "Index all the software concepts for a given provider."
+  [system provider]
+  (let [db (helper/get-metadata-db-db system)
+        {:keys [provider-id]} provider
+        params {:concept-type :software
+                :provider-id provider-id}
+        concept-batches (db/find-concepts-in-batches db provider params (:db-batch-size system))
+        num-software-all-rev (index/bulk-index {:system (helper/get-indexer system)} concept-batches {:all-revisions-index? true})
+        num-software (index/bulk-index {:system (helper/get-indexer system)} concept-batches {})]
+    (info "Indexed" num-software-all-rev "software for provider (all-revisions)" provider-id)
+    (info "Indexed" num-software "software for provider" provider-id)
+    num-software))
 
 (defn index-provider
   "Bulk index a provider."
@@ -113,12 +131,14 @@
   (info "Indexing provider" provider-id)
   (let [db (helper/get-metadata-db-db system)
         {:keys [provider-id] :as provider} (p/get-provider db provider-id)
+        sof-count (index-provider-software system provider)
         col-count (index-provider-collections system provider)
         gran-count (index-granules-for-provider system provider start-index)]
     (info "Indexing of provider" provider-id "completed.")
-    (format "Indexed %d collections containing %d granules for provider %s"
+    (format "Indexed %d collections containing %d granules and %d software for provider %s"
             col-count
             gran-count
+            sof-count
             provider-id)))
 
 (defn- bulk-index-concept-batches

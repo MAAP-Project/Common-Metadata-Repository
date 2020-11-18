@@ -17,6 +17,7 @@
 (def concept-schema-name
   "A map of concept types to schema names."
   {:collection "umm-c-json-schema.json"
+   :software "umm-soft-json-schema.json"
    :granule "umm-g-json-schema.json"
    :service "umm-s-json-schema.json"
    :tool "umm-t-json-schema.json"
@@ -343,6 +344,7 @@
   "A map of schema names to the namespace they should be placed in"
   {"umm-cmn-json-schema.json" 'cmr.umm-spec.models.umm-common-models
    "umm-c-json-schema.json" 'cmr.umm-spec.models.umm-collection-models
+   "umm-soft-json-schema.json" 'cmr.umm-spec.models.umm-software-models
    "umm-g-json-schema.json" 'cmr.umm-spec.models.umm-granule-models
    "umm-s-json-schema.json" 'cmr.umm-spec.models.umm-service-models
    "umm-t-json-schema.json" 'cmr.umm-spec.models.umm-tool-models

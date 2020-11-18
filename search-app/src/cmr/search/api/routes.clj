@@ -48,6 +48,7 @@
    [cmr.search.results-handlers.umm-json-results-handler]
    [cmr.search.results-handlers.variables-json-results-handler]
    [cmr.search.results-handlers.variables-umm-json-results-handler]
+   [cmr.search.results-handlers.software-umm-json-results-handler]
    ;;
    ;; ACL support - required here to avoid circular dependencies
    [cmr.search.services.acls.collection-acls]

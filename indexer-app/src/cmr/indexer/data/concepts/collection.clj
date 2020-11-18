@@ -29,6 +29,7 @@
    [cmr.indexer.data.concepts.collection.opendata :as opendata]
    [cmr.indexer.data.concepts.collection.platform :as platform]
    [cmr.indexer.data.concepts.collection.science-keyword :as sk]
+   [cmr.indexer.data.concepts.software :as software]
    [cmr.indexer.data.concepts.keyword-util :as keyword-util]
    [cmr.indexer.data.concepts.service :as service]
    [cmr.indexer.data.concepts.spatial :as spatial]

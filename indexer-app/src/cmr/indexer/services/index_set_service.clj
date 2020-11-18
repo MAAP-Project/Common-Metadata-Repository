@@ -17,6 +17,7 @@
   "Defines the concept types that are indexed in elasticsearch and thus searchable."
   [:autocomplete
    :collection
+   :software
    :deleted-granule
    :granule
    :service

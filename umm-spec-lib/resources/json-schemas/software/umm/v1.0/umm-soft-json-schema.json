@@ -1,0 +1,1018 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+      "DirectoryNameType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Formerly called Internal Directory Name (IDN) Node (IDN_Node). This element has been used historically by the GCMD internally to identify association, responsibility and/or ownership of the dataset, service or supplemental information. Note: This field only occurs in the DIF. When a DIF record is retrieved in the ECHO10 or ISO 19115 formats, this element will not be translated.",
+        "properties": {
+          "ShortName": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/ShortNameType"
+          },
+          "LongName": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/LongNameType"
+          }
+        },
+        "required": ["ShortName"]
+      },
+      "ProcessingLevelType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "This element contains the Processing Level Id and the Processing Level Description",
+        "properties": {
+          "ProcessingLevelDescription": {
+            "description": "Description of the meaning of the Processing Level Id, e.g., the Description for the Level4 Processing Level Id might be 'Model output or results from analyses of lower level data'",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "Id": {
+            "description": "An identifier indicating the level at which the data in the collection are processed, ranging from Level0 (raw instrument data at full resolution) to Level4 (model output or analysis results).  The value of Processing Level Id is chosen from a controlled vocabulary.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "required": ["Id"]
+      },
+      "PaleoTemporalCoverageType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "For paleoclimate or geologic data, PaleoTemporalCoverage is the length of time represented by the data collected. PaleoTemporalCoverage should be used when the data spans time frames earlier than yyyy-mm-dd = 0001-01-01.",
+        "properties": {
+          "ChronostratigraphicUnits": {
+            "description": "Hierarchy of terms indicating units of geologic time, i.e., eon (e.g, Phanerozoic), era (e.g., Cenozoic), period (e.g., Paleogene), epoch (e.g., Oligocene), and stage or age (e.g, Chattian).",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ChronostratigraphicUnitType"
+            },
+            "minItems": 0
+          },
+          "StartDate": {
+            "description": "A string indicating the number of years furthest back in time, including units, e.g., 100 Ga.  Units may be Ga (billions of years before present), Ma (millions of years before present), ka (thousands of years before present) or ybp (years before present).",
+            "type": "string"
+          },
+          "EndDate": {
+            "description": "A string indicating the number of years closest to the present time, including units, e.g., 10 ka.  Units may be Ga (billions of years before present), Ma (millions of years before present), ka (thousands of years before present) or ybp (years before present).",
+            "type": "string"
+          }
+        }
+      },
+      "ChronostratigraphicUnitType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Eon": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/KeywordStringType"
+          },
+          "Era": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/KeywordStringType"
+          },
+          "Epoch": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/KeywordStringType"
+          },
+          "Stage": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/KeywordStringType"
+          },
+          "DetailedClassification": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/KeywordStringType"
+          },
+          "Period": {
+            "$ref": "umm-cmn-json-schema.json#/definitions/KeywordStringType"
+          }
+        },
+        "required": ["Eon"]
+      },
+      "SpatialInformationType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "This entity stores the reference frame or system from which altitudes (elevations) are measured. The information contains the datum name, distance units and encoding method, which provide the definition for the system. This table also stores the characteristics of the reference frame or system from which depths are measured. The additional information in the table are geometry reference data etc.",
+        "properties": {
+          "VerticalCoordinateSystem": {
+            "$ref": "#/definitions/VerticalCoordinateSystemType"
+          },
+          "HorizontalCoordinateSystem": {
+            "$ref": "#/definitions/HorizontalCoordinateSystemType"
+          },
+          "SpatialCoverageType": {
+            "description": "Denotes whether the spatial coverage of the collection is horizontal, vertical, horizontal and vertical, orbit, or vertical and orbit.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "required": ["SpatialCoverageType"]
+      },
+      "VerticalCoordinateSystemType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "AltitudeSystemDefinition": {
+            "$ref": "#/definitions/VerticalSystemDefinitionType"
+          },
+          "DepthSystemDefinition": {
+            "$ref": "#/definitions/VerticalSystemDefinitionType"
+          }
+        }
+      },
+      "VerticalSystemDefinitionType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The reference frame or system from which altitude or depths are measured. The term 'altitude' is used instead of the common term 'elevation' to conform to the terminology in Federal Information Processing Standards 70-1 and 173. The information contains the datum name, distance units and encoding method, which provide the definition for the system.",
+        "properties": {
+          "DatumName": {
+            "description": "The identification given to the level surface taken as the surface of reference from which measurements are compared.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "DistanceUnits": {
+            "description": "The units in which measurements are recorded.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "EncodingMethod": {
+            "description": "The means used to encode measurements.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "Resolutions": {
+            "description": "The minimum distance possible between two adjacent values, expressed in distance units of measure for the collection.",
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 0
+          }
+        }
+      },
+      "HorizontalCoordinateSystemType": {
+        "type": "object",
+        "oneOf": [{
+          "additionalProperties": false,
+          "properties": {
+            "GeodeticModel": {
+              "$ref": "#/definitions/GeodeticModelType"
+            }
+          },
+          "required": ["GeodeticModel"]
+        }, {
+          "additionalProperties": false,
+          "properties": {
+            "GeodeticModel": {
+              "$ref": "#/definitions/GeodeticModelType"
+            },
+            "GeographicCoordinateSystem": {
+              "$ref": "#/definitions/GeographicCoordinateSystemType"
+            }
+          },
+          "required": ["GeographicCoordinateSystem"]
+        }, {
+          "additionalProperties": false,
+          "properties": {
+            "GeodeticModel": {
+              "$ref": "#/definitions/GeodeticModelType"
+            },
+            "LocalCoordinateSystem": {
+              "$ref": "#/definitions/LocalCoordinateSystemType"
+            }
+          },
+          "required": ["LocalCoordinateSystem"]
+        }]
+      },
+      "GeodeticModelType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "HorizontalDatumName": {
+            "description": "The identification given to the reference system used for defining the coordinates of points.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "EllipsoidName": {
+            "description": "Identification given to established representation of the Earth's shape.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "SemiMajorAxis": {
+            "description": "Radius of the equatorial axis of the ellipsoid.",
+            "type": "number"
+          },
+          "DenominatorOfFlatteningRatio": {
+            "description": "The ratio of the Earth's major axis to the difference between the major and the minor.",
+            "type": "number"
+          }
+        }
+      },
+      "GeographicCoordinateSystemType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "GeographicCoordinateUnits": {
+            "description": "Units of measure used for the geodetic latitude and longitude resolution values (e.g., decimal degrees).",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "LatitudeResolution": {
+            "description": "The minimum difference between two adjacent latitude values in the Geographic Coordinate System,  expressed in Geographic Coordinate Units of measure, expressed as a two-digit decimal number, e.g., 0.01",
+            "type": "number"
+          },
+          "LongitudeResolution": {
+            "description": "The minimum difference between two adjacent longitude values in the Geographic Coordinate System, expressed in Geographic Coordinate Units of measure, expressed as a two-digit decimal number, e.g., 0.01",
+            "type": "number"
+          }
+        }
+      },
+      "LocalCoordinateSystemType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "GeoReferenceInformation": {
+            "description": "The information provided to register the local system to the Earth (e.g. control points, satellite ephemeral data, and inertial navigation data).",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "Description": {
+            "description": "A description of the Local Coordinate System and geo-reference information.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          }
+        }
+      },
+      "CollectionDataTypeEnum": {
+        "description": "This element is used to identify the collection as a Science Quality Collection or as a non-science-quality collection such as a Near Real Time collection. If a collection does not contain this field, it will be assumed to be of science-quality.",
+        "type": "string",
+        "enum": ["SCIENCE_QUALITY", "NEAR_REAL_TIME", "OTHER"]
+      },
+      "SoftwareType":{
+          "type": "object",
+          "additionalProperties": false,
+          "description": "General software description such as title, name, doi, authority, etc.",
+          "properties": {
+              "EntryTitle": {
+                  "description": "Descriptive formal title, or name, of the software",
+                  "$ref": "umm-cmn-json-schema.json#/definitions/EntryTitleType"
+              },
+              "ShortName": {
+                  "description": "The Short Name element contains an abbreviated name of the software",
+                  "$ref": "umm-cmn-json-schema.json#/definitions/ShortNameType"
+              },
+              "DOI": {
+                  "description": "Stores the DOI that identifies the software. A DOI is a persistant identifier that is used to uniquel identify objects",
+                  "$ref": "umm-cmn-json-schema.json#/definitions/DoiType"
+              },
+              "Description":{
+                  "description": "Brief description of the purpose of the software. This description is meant to concisely provide users the information needed to quickly understand the relevance and userfulness of the software",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40000
+              },
+              "FundingSource":{
+                "description": "Formal name(s) of agencies whos funding contributed to the development of the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "Project": {
+                  "description": "",
+                  "$ref": "umm-cmn-json-schema.json#/definitions/ProjectType"
+              },
+              "Downloads":{
+                  "description": "Number of times this version of the software has been downloaded",
+                  "type": "integer"
+              },
+              "Publisher":{
+                  "description": "Name of the entity responsible for publishing the software",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+              },
+              "OtherDetails":{
+                  "description": "Any citation details not included in other fields",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+              },
+              "Citation": {
+                  "description": "Formatted citation for the software",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8000
+              }
+          }
+      },
+      "MetadataType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "General information about the updated time, published time of metadata record and language used in the metadata of this sofware",
+        "properties": {
+            "Updated":{
+                "description": "Date of creation or last updated of the metadata record",
+                "format": "date-time",
+                "type": "string"
+            },
+            "Language":{
+                "description": "Metadata language",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Published":{
+                "description": "Date of the first availability of the metadata record",
+                "format": "date-time",
+                "type": "string"
+            }
+        }
+      },
+      "SoftwareDescriptionType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software description",
+        "properties": {
+            "platform": {
+                "description": "Describes the platform on which the associated instrument is contained",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+            },
+            "instrument": {
+                "description": "Describes the intrument whos data the software was developed to process",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+            },
+            "InputDataset": {
+                "description": "The dataset or datasets that are valid inputs into the software",
+                "type": "string"
+            },
+            "InputVariable": {
+                "description": "Input variable",
+                "$ref": "#/definitions/InputVariableType"
+            },
+            "OutputDataset": {
+                "description": "The dataset or datasets that are outputs of the software",
+                "type": "string"
+            },
+            "OutputVariable": {
+                "description": "Output variable",
+                "$ref": "#/definitions/OutputVariableType"
+            },
+            "InteroperableSoftware": {
+                "description": "Interoperable Software",
+                "$ref": "#/definitions/InteroperableSoftwareType"
+            }
+        }
+      },
+      "ExecuteType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software execution",
+        "properties": {
+            "Access": {
+                "description": "Software accessing",
+                "$ref": "#/definitions/ExecuteAccessType"
+            },
+            "Install": {
+                "description": "Software installation",
+                "$ref": "#/definitions/ExecuteInstallType"
+            },
+            "Run": {
+                "description": "Software running",
+                "$ref": "#/definitions/ExecuteRunType"
+  
+            }
+        }          
+      },
+      "ExecuteInstallType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software execution access",
+        "properties": {
+            "Documentation": {
+                "description": "Detailed documentation on how to download and install the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 8000
+            },
+            "Language": {
+                "description": "The language(s) included in the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "properties": {
+                    "Version":{
+                        "description": "Version of language(s) required for successful installation of the software",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                    }
+                }
+            },
+            "Memory": {
+                "description": "The memory required to download and install the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+            },
+            "OperatingSystem": {
+                "description": "List of operating systems that the software can be run on",
+                "type": "string",
+                "enum": ["Microsoft Windows", "macOS", "Apple OS X", "Linux", "Ubuntu", "Debian"]
+            },
+            "InstallationTime": {
+                "description": "The average or benchmarked time (in minutes) to install the software on an operating system",
+                "type": "number"
+            },
+            "Dependencies": {
+                "description": "Any additional dependencies, such as third party software or language specific package, that are required to install the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "AdditionalInformation": {
+                "description": "Any additional information that a user may need to install the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            }
+        }
+      },
+      "ExecuteRunType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software running",
+        "properties": {
+            "TestDescriptions": {
+                "description": "Description of the test that is being run including such information as the use case being demonstrated and the time it takes to complete",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            },
+            "TestInstructions": {
+                "description": "Instructions on how to run and validate any provided benchmark test cases",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            },
+            "TestData": {
+                "description": "Local locatation of the data provided for benchmarking tesing of the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "TestDataDescription": {
+                "description": "Describes the data that is being used for the benchmarking test",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            },
+            "TestMemory": {
+                "description": "Memory required to run the benchmark test provided",
+                "type": "number"
+            },
+            "TestRunTimeDescription": {
+                "description": "Description of the time and processing requirements for a sample run of the benchmark test case. Should provide a user a general understanding of the compute time and any additional information needed to successfully run the test case",
+                "type": "number"
+            },
+            "TestOutputDiskSpace": {
+                "description": "The disk space required to store output from the provided benchmark test provided",
+                "type": "number"
+            }
+        }
+      },
+      "ExecuteAccessType": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software execution access",
+        "properties": {
+            "URL": {
+                "description": "Location at which the software can be downloaded from",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description": {
+                "description": "Description of the website from which the software can be accessed",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "LicenseURL": {
+                "description": "Execute Access License URL",
+                "$ref": "#/definitions/ExecuteAccessLicenseURLType"
+            },
+            "Constraints": {
+                "description": "Any resrictions imposed on acccess to the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            }
+        }
+      },
+      "ExecuteAccessLicenseURLType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software execution access",
+        "properties": {
+            "URL":{
+                "description": "URL of license that software is released under",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Protocol":{
+                "type": "string"
+            },
+            "Name":{
+                "description": "Name of the license the software is released under",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description":{
+                "description": "Description of the liscense the software is released under",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            }
+        }
+  
+      },
+      "InteroperableSoftwareType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Interoperable Software description",
+        "properties": {
+            "Name": {
+                "description": "The name of the the workflow that utilizes the software being described",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "URL": {
+              "description": "The URL",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "Description": {
+                "description": "Brief description of the software workflow. Should provide the overall goal of the workflow as well as brief description of the purpose of each software component",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            }, 
+            "Workflow":{
+                "description": "Workflow",
+                "$ref": "#/definitions/WorkflowType"
+            }
+        }
+      },
+      "WorkflowType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Workflow description",
+        "properties": {
+            "Name": {
+                "description": "The name of the workflow that utilizes the software being described",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description": {
+                "description": "Brief description of the software workflow. Should provide the overall goal of the workflow as well as brief description of the purpose of each software component.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            }, 
+            "Step":{
+                "description": "Describes the which step in a defined workflow this software presents",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+            }
+  
+        }
+          
+      },
+      "InputVariableType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Input Software description",
+        "properties": {
+            "Name": {
+                "description": "The name(s) of the variables that are required inputs into the software. A variable is a named set of data that contains the recorded values of a measurement. A variable can also be the output of a model",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description": {
+                "description": "Brief description of the input variable including any relevant scientific or technical content",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }, 
+            "AccessURL":{
+                "description": "Access URL",
+                "$ref": "#/definitions/AccessURLType"
+            }
+        }
+      },
+      "OutputVariableType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Output Software description",
+        "properties": {
+            "Name": {
+                "description": "The name(s) of the variables that are required output from the software. A variable is a named set of data that contains the recorded values of a measurement. A variable can also be the input of a model",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description": {
+                "description": "Brief description of the output variable including any relevant scientific or technical content",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }, 
+            "AccessURL":{
+                "description": "Access URL",
+                "$ref": "#/definitions/AccessURLType"
+            }
+        }
+      },
+      "AccessURLType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "AccessURL Type",
+        "properties": {
+            "URL":{
+                "description": "Access URL location for the data",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description":{
+                "description": "Brief description of where the link navigates to and the type of infomation contained. Descriptions should be unique to the link",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }
+        }
+      },
+      "SoftwareUsageType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software Usage",
+        "properties": {
+            "Assumptions":{
+                "description": "Describes any assumptions make for using the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40000
+            },
+            "Limitations":{
+                "description": "Describes any limitations in using the software. May include technical as well as scientific limitations",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40000
+            },
+            "Type":{
+                "description": "The type of software (i.e. program, source code, etc)",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40000
+            },
+            "Provenance":{
+                "description": "Free text content discribing any known bugs or issues of the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40000
+            }
+        }
+      },
+      "SoftwareVersionType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software Version",
+        "properties": {
+            "Version":{
+                "description": "The version number or version indicator of the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+            },
+            "ReleaseDate":{
+                "description": "The release date for this version of the software",
+                "type": "string",
+                "format": "date-time"
+            },
+            "Description":{
+                "description": "Provides a brief and meaningful description of the software version including how this differes from the previous version",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+            },
+            "Supersedes":{
+                "description": "The version number or version indicator of the software this version supersedes",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+            },
+            "SupersededBy":{
+                "description": "The version number or version indicator of the software version this version is superseded by",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+            }
+        }
+      },
+      "SoftwareContactType":{
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Contact Information",
+          "properties": {
+              "ContactPerson":{
+                "description": "Contact Person Information",
+                "$ref": "#/definitions/ContactPersonType"
+              },
+              "ContactGroup":{
+                "description": "Contact Person Information",
+                "$ref": "#/definitions/ContactGroupType"
+              }
+          }
+      },
+      "ContactPersonType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contact Person Information",
+        "properties": {
+            "Roles":{
+                "description": "The contact person's role as related to the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "FirstName":{
+                "description": "The first name of the contact person",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "MiddleName":{
+                "description": "The middle name of the contact person",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "LastName":{
+                "description": "The last name of the contact person",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "ContactInformation":{
+                "description": "Contact Person Information",
+                "$ref": "#/definitions/ContactInformationType"
+            },
+            "UUID":{
+                "description": "Unique identifier of the person",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }
+        }
+      },
+      "ContactGroupType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contact Group Information",
+        "properties": {
+            "Roles":{
+                "description": "The contact group's role as related to the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "GroupName":{
+                "description": "The contact group's name",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "ContactInformation":{
+                "description": "Contact Person Information",
+                "$ref": "#/definitions/ContactGroupInformationType"
+            },
+            "UUID":{
+                "description": "Unique identifier of the person",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }
+        }
+      },
+      "ContactInformationType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contact information",
+        "properties": {
+            "RelatedURL":{
+                "description": "Related URLs relevant to contacting the contact person/group",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "ContactMechanism":{
+                "description": "Mechanism of contact information",
+                "$ref": "#/definitions/ContactInformationMechanismType"
+            }
+        }
+      },
+      "ContactGroupInformationType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contact information",
+        "properties": {
+            "RelatedURL":{
+                "description": "Related URLs relevant to contacting the contact person/group",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Mechanism":{
+                "description": "Mechanism of contact information",
+                "$ref": "#/definitions/ContactInformationMechanismType"
+            }
+        }
+      },
+      "ContactInformationMechanismType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Mechanism of contact information",
+        "properties": {
+            "Type":{
+                "description": "The contact mechanism type",
+                "type": "string",
+                "enum": ["Enumeration", "Direct Line", "Email", "Facebook", "Fax", "Mobile", "Modem", "Primary", "TDD/TTY Phone", "Telephone", "Twitter", "U.S.toll free", "Other"]
+            },
+            "Value":{
+                "description": "The actual contact mechanism value (email address, etc...)",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }
+        }
+      },
+      "SoftwareRelatedURLType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software related URLs",
+        "properties": {
+            "URL":{
+                "description": "URL that provides access to resources related to the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Description":{
+                "description": "Brief description of where the link navigates to and the type of information contained. Descriptions should be unique to the link",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            },
+            "URLContentType":{
+                "description": "Describes the content of a link",
+                "type": "string",
+                "enum": ["CollectionURL", "PublicationURL", "DataCenterURL", "DistributionURL", "DataContactURL", "VisualizationURL"]
+            },
+            "Type":{
+                "description": "Keyword that specifies the content of the link",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Subtype":{
+                "description": "Keyword that further specifies the content of the link",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "size":{
+                "description": "The content size (in bytes) of the representation that is expected to be returned from the URL",
+                "type": "integer"
+            },
+            "language":{
+                "description": "The language of the resource pointed to by the URL",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }
+        }
+      },
+      "SoftwareScienceKeywordType":{
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Software Science Keywords",
+        "properties": {
+            "Category":{
+                "description": "The category of software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "Topic":{
+                "description": "Software topics",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+            },
+            "Term":{
+                "description": "Some terms about the software",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "VariableLevel1":{
+                "description": "Variable Level1",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "VariableLevel2":{
+                "description": "Variable Level2",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            },
+            "VariableLevel3":{
+                "description": "Variable Level3",
+                "type": "integer"
+            },
+            "DetailedVariable":{
+                "description": "Detailed variable",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+            }
+        }
+      }
+    },
+    "title": "UMM-Soft",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "Software": {
+            "description": "General software description such as title, name, doi, authority, etc.",
+            "$ref": "#/definitions/SoftwareType"
+          },
+          "Metadata": {
+            "description": "General information about the updated time, published time of metadata record and language used in the metadata of this sofware",
+            "$ref": "#/definitions/MetadataType"
+          },
+          "SoftwareDescription": {
+              "description" : "Contain detailed data about the software such as input, output variables, datasets and etc.",
+              "$ref": "#/definitions/SoftwareDescriptionType"
+          },
+          "Execute": {
+              "description": "Software execution",
+              "$ref": "#/definitions/ExecuteType"
+          },
+          "SoftwareUsage": {
+            "description": "Software execution",
+            "$ref": "#/definitions/SoftwareUsageType"
+          },
+          "Version": {
+            "description": "Software execution",
+            "$ref": "#/definitions/SoftwareVersionType"
+          },
+          "Contact": {
+            "description": "Software execution",
+            "$ref": "#/definitions/SoftwareContactType"
+          },
+          "RelatedURLs": {
+            "description": "Software related URLs",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/SoftwareRelatedURLType"
+            },
+            "minItems": 1
+          },
+          "ScienceKeywords": {
+            "description": "Software related URLs",
+            "type": "array",
+            "items":{
+              "$ref": "#/definitions/SoftwareScienceKeywordType"
+            },
+            "minItems": 1
+          }
+    },
+    "required": ["Software", "Metadata", "SoftwareDescription", "Version","ScienceKeywords", "Contact"]
+  }
+  

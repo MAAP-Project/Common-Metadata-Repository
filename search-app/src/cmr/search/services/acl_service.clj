@@ -18,6 +18,11 @@
   [context acls concept]
   true)
 
+;; software currently have no ACLs, so return `true` for all ACL checks
+(defmethod acls-match-concept? :software
+  [context acls concept]
+  true)
+
 ;; tools currently have no catalog item ACLs, so return `true` for all ACL checks
 (defmethod acls-match-concept? :tool
   [context acls concept]
@@ -69,6 +74,7 @@
   applicable."
   {:granule :granule-applicable
    :collection :collection-applicable
+   :software :software-applicable
    :service :service-applicable
    :tool :tool-applicable
    :variable :variable-applicable

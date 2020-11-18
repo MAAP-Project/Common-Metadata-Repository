@@ -186,6 +186,11 @@
   [{:field :entry-title :order :asc}
    {:field :provider-id :order :asc}])
 
+(defmethod common-qm/default-sort-keys :software
+  [_]
+  [{:field :entry-title :order :asc}
+   {:field :provider-id :order :asc}])
+
 (defmethod common-qm/default-sort-keys :autocomplete
   [_]
   [{:field :_score :order :desc}])
@@ -245,6 +250,15 @@
    :all-revisions? false})
 
 (defmethod common-qm/concept-type->default-query-attribs :collection
+  [_]
+  {:condition (common-qm/->MatchAllCondition)
+   :page-size common-qm/default-page-size
+   :offset common-qm/default-offset
+   :result-format :xml
+   :echo-compatible? false
+   :all-revisions? false})
+
+(defmethod common-qm/concept-type->default-query-attribs :software
   [_]
   {:condition (common-qm/->MatchAllCondition)
    :page-size common-qm/default-page-size

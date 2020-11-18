@@ -30,6 +30,7 @@
    "G" :granule
    "H" :humanizer
    "S" :service
+   "W"  :software
    "SA" :service-association
    "TL" :tool
    "TLA" :tool-association

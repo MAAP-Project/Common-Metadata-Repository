@@ -5,6 +5,7 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [cmr.umm-spec.models.umm-collection-models]
+   [cmr.umm-spec.models.umm-software-models]
    [cmr.umm-spec.models.umm-common-models]
    [cmr.umm-spec.models.umm-granule-models]
    [cmr.umm-spec.models.umm-service-models]
@@ -20,6 +21,7 @@
   "A map of schema names to the namespace they should be placed in"
   {"umm-cmn-json-schema.json" 'cmr.umm-spec.models.umm-common-models
    "umm-c-json-schema.json" 'cmr.umm-spec.models.umm-collection-models
+   "umm-soft-json-schema.json" 'cmr.umm-spec.models.umm-software-models
    "umm-g-json-schema.json" 'cmr.umm-spec.models.umm-granule-models
    "umm-s-json-schema.json" 'cmr.umm-spec.models.umm-service-models
    "umm-sub-json-schema.json" 'cmr.umm-spec.models.umm-subscription-models
@@ -198,6 +200,12 @@
     :description "Defines UMM-C clojure records."
     :schema-resource (js/concept-schema-resource :collection)
     :loaded-schema (js/concept-schema :collection)})
+    
+  (generate-clojure-records-file
+   {:the-ns 'cmr.umm-spec.models.umm-software-models
+    :description "Defines UMM-Soft clojure records."
+    :schema-resource (js/concept-schema-resource :software)
+    :loaded-schema (js/concept-schema :software)})
 
   (generate-clojure-records-file
    {:the-ns 'cmr.umm-spec.models.umm-granule-models

@@ -44,6 +44,19 @@
     :always-case-sensitive #{:echo-collection-id}
     :disallow-pattern #{:echo-collection-id}}))
 
+(defmethod cpv/params-config :software
+  [_]
+  (cpv/merge-params-config
+    cpv/basic-params-config
+    {:single-value #{:all-revisions}
+     :multiple-value #{:short-name :instrument :doi :entry-title :platform :project-short-name
+                       :version :provider :native-id :concept-id}
+     :always-case-sensitive #{}
+     :disallow-pattern #{}
+     }
+  )
+)
+
 (defmethod cpv/params-config :granule
   [_]
   (cpv/merge-params-config
@@ -185,6 +198,63 @@
    :tool-type cpv/string-param-options
    :tool-concept-id cpv/and-option})
 
+(defmethod cpv/valid-parameter-options :software
+  [_]
+  { :doi cpv/string-plus-and-options
+    :revision-id cpv/string-param-options
+    :native-id cpv/string-param-options
+    :revision-date cpv/string-param-options
+    :provider cpv/string-param-options
+
+    ;;Software
+    :entry-title cpv/string-plus-and-options
+    :short-name cpv/string-plus-and-options
+    :funding-source cpv/string-plus-and-options
+    :project-short-name cpv/string-plus-and-options
+    :project-long-name cpv/string-plus-and-options
+    :publisher cpv/string-plus-and-options
+    :citation cpv/string-plus-and-options
+    ;;Metadata
+    :update-time cpv/string-plus-and-options
+    :language cpv/string-plus-and-options
+    :publish-time cpv/string-plus-and-options
+    ;;Software Description
+    :platform cpv/string-plus-and-options
+    :instrument cpv/string-plus-and-options
+    ;:inputdataset cpv/string-plus-and-options
+    :inputvariable-name cpv/string-plus-and-options
+    ;:outputdataset cpv/string-plus-and-options
+    :outputvariable-name cpv/string-plus-and-options
+    :interoperable-software-name cpv/string-plus-and-options
+    :interoperable-software-workflow-name cpv/string-plus-and-options
+    ;;Execute
+    :license-name cpv/string-plus-and-options
+    :constraints cpv/string-plus-and-options
+    :install-documentation cpv/string-plus-and-options
+    :install-language cpv/string-plus-and-options
+    :install-version cpv/string-plus-and-options
+    :install-memory cpv/string-plus-and-options
+    :install-operatingsystem cpv/string-plus-and-options
+    :install-time cpv/string-plus-and-options
+    :install-dependency cpv/string-plus-and-options
+    ;;SoftwareUsage
+    :softwareusage-type cpv/string-plus-and-options      
+    ;;Version
+    :version-id cpv/string-plus-and-options
+    :release-date cpv/string-plus-and-options
+    :supersedes cpv/string-plus-and-options
+    :superseded-by cpv/string-plus-and-options 
+    ;;Contact
+    :contact-person-role cpv/string-plus-and-options
+    :contact-person-firstname  cpv/string-plus-and-options
+    :contact-person-lastname  cpv/string-plus-and-options
+    :contact-person-middlename  cpv/string-plus-and-options
+    :contact-group-role cpv/string-plus-and-options
+    :contact-group-name  cpv/string-plus-and-options
+    ;;ScienceKeywords
+    :science-keywords cpv/string-plus-or-options
+  })
+
 (defmethod cpv/valid-parameter-options :granule
   [_]
   {:attribute exclude-plus-or-option
@@ -267,9 +337,18 @@
   #{:include-granule-counts :include-has-granules :include-facets :hierarchical-facets
     :include-highlights :include-tags :all-revisions :echo-compatible :boosts :facets-size})
 
+(defmethod cpv/valid-query-level-params :software
+  [_]
+  #{:hierarchical-facets
+    :include-highlights :all-revisions :echo-compatible :boosts})
+
 (defmethod cpv/valid-query-level-options :collection
   [_]
   #{:highlights :spatial})
+
+(defmethod cpv/valid-query-level-options :software
+  [_]
+  #{:highlights})
 
 (defmethod cpv/valid-query-level-options :granule
   [_]
@@ -313,6 +392,51 @@
     :has-granules-or-cwic
     :usage-relevancy-score
     :ongoing})
+
+(defmethod cpv/valid-sort-keys :software
+  [_]
+  #{
+    :provider
+    :revision-date
+    ;Software
+    :short-name
+    :entry-title
+    :project-short-name
+    :project-long-name
+    :publisher
+    :citation
+    ;Metadata
+    :update-time
+    :language
+    :publish-time
+    ;Software Description
+    :platform
+    :instrument
+    ;:inputdataset
+    :inputvariable-name
+    ;Execute
+    :install-language
+    :install-version
+    ;Version
+    :version-id
+    :release-date
+    ;Contact
+    :contact-person-role
+    :contact-person-firstname
+    :contact-person-lastname
+    :contact-person-middlename
+    :contact-group-role
+    :contact-group-name
+    ;:funding-source
+    ;Science Keywords
+    :science-keywords.category
+    :science-keywords.topic
+    :science-keywords.term
+    :science-keywords.variable-level-1
+    :science-keywords.variable-level-2
+    :science-keywords.variable-level-3
+    :science-keywords.detailed-variable
+    })
 
 (defmethod cpv/valid-sort-keys :granule
   [_]
@@ -866,6 +990,12 @@
                  collection-facets-size-validation
                  circle-values-validation
                  shapefile-format-validation])
+    :software (concat
+                cpv/common-validations
+                [
+                 revision-date-validation
+                 created-at-validation
+                 ])
    :granule (concat
              cpv/common-validations
              [temporal-format-validation

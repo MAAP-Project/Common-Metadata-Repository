@@ -24,6 +24,14 @@
   "Number of shards to use for the collection index"
   {:default 10 :type Long})
 
+(defconfig elastic-software-index-num-shards
+  "Number of shards to use for the software index"
+  {:default 5 :type Long})
+
+(defconfig elastic-software-v2-index-num-shards
+  "Number of shards to use for the software index"
+  {:default 10 :type Long})
+
 (defconfig elastic-granule-index-num-shards
   "Number of shards to use for the individual collection granule indexes."
   {:default 5 :type Long})
@@ -68,6 +76,14 @@
   "The index to use for the latest collection revisions."
   {:default "1_collections_v2" :type String})
 
+(defconfig software-index-alias
+  "The alias to use for the softeare index."
+  {:default "software_search_alias" :type String})
+
+(defconfig software-index
+  "The index to use for the latest software revisions."
+  {:default "1_software_v2" :type String})
+
 (def ^:private MAX_RESULT_WINDOW
   "Number of max results can be returned in an Elasticsearch query."
   1000000)
@@ -80,6 +96,18 @@
 
 (def collection-setting-v2 {:index
                             {:number_of_shards (elastic-collection-v2-index-num-shards),
+                             :number_of_replicas 1,
+                             :max_result_window MAX_RESULT_WINDOW,
+                             :refresh_interval "1s"}})
+
+(def software-setting-v1 {:index
+                            {:number_of_shards (elastic-software-index-num-shards)
+                             :number_of_replicas 1,
+                             :max_result_window MAX_RESULT_WINDOW,
+                             :refresh_interval "1s"}})
+
+(def software-setting-v2 {:index
+                            {:number_of_shards (elastic-software-v2-index-num-shards),
                              :number_of_replicas 1,
                              :max_result_window MAX_RESULT_WINDOW,
                              :refresh_interval "1s"}})
@@ -154,6 +182,24 @@
    :detailed-variable-lowercase m/string-field-mapping
    :uuid m/string-field-mapping
    :uuid-lowercase m/string-field-mapping})
+
+(defnestedmapping software-science-keywords-field-mapping
+  "Defines mappings for science keywords."
+  {:category m/string-field-mapping
+   :category-lowercase m/string-field-mapping
+   :topic m/string-field-mapping
+   :topic-lowercase m/string-field-mapping
+   :term m/string-field-mapping
+   :term-lowercase m/string-field-mapping
+   :variable-level-1 m/string-field-mapping
+   :variable-level-1-lowercase m/string-field-mapping
+   :variable-level-2 m/string-field-mapping
+   :variable-level-2-lowercase m/string-field-mapping
+   :variable-level-3 m/string-field-mapping
+   :variable-level-3-lowercase m/string-field-mapping
+   :detailed-variable m/string-field-mapping
+   :detailed-variable-lowercase m/string-field-mapping
+   })
 
 (defnestedmapping tag-associations-mapping
   "Defines mappings for tag associations."
@@ -515,6 +561,106 @@
           :usage-relevancy-score m/int-field-mapping}
          spatial-coverage-fields))
 
+(defmapping software-mapping :software
+  "Defines the elasticsearch mapping for storing software. These are the
+  fields that will be stored in an Elasticsearch document."
+  ;{:_id {:index "not_analyzed"
+  ;       :store true}}
+  { :concept-id   m/string-field-mapping
+    :doi-stored    m/string-field-mapping
+    :revision-id m/int-field-mapping
+    :concept-seq-id m/int-field-mapping
+    :native-id m/string-field-mapping
+    :native-id-lowercase m/string-field-mapping
+    :user-id m/string-field-mapping
+    :deleted m/bool-field-mapping ; deleted=true is a tombston
+    :revision-date m/date-field-mapping ; ?
+    :revision-date2 m/date-field-mapping
+    :provider-id           m/string-field-mapping
+    :provider-id-lowercase m/string-field-mapping
+    :metadata-format (m/not-indexed m/string-field-mapping)
+    :created-at m/date-field-mapping
+    ;;Software
+    :entry-title           m/string-field-mapping
+    :entry-title-lowercase m/string-field-mapping
+    :short-name            m/string-field-mapping
+    :short-name-lowercase  m/string-field-mapping
+    :doi-lowercase m/string-field-mapping
+    :doi           m/string-field-mapping
+    :funding-source       m/string-field-mapping
+    :project-short-name   m/string-field-mapping
+    :project-short-name-lowercase   m/string-field-mapping
+    :project-long-name   m/string-field-mapping
+    :project-long-name-lowercase   m/string-field-mapping
+    :publisher   m/string-field-mapping
+    :publisher-lowercase   m/string-field-mapping
+    :citation m/int-field-mapping
+    ;;Metadata
+    :update-time  m/date-field-mapping
+    :language     m/string-field-mapping
+    :language-lowercase     m/string-field-mapping
+    :publish-time m/date-field-mapping
+    ;;Software Description
+    :platform     m/string-field-mapping
+    :platform-lowercase     m/string-field-mapping
+    :instrument     m/string-field-mapping
+    :instrument-lowercase     m/string-field-mapping
+    ;:inputdataset     m/string-field-mapping
+    :inputvariable-name     m/string-field-mapping
+    ;:outputdataset     m/string-field-mapping
+    :outputvariable-name     m/string-field-mapping
+    :interoperable-software-name     m/string-field-mapping
+    :interoperable-software-workflow-name m/string-field-mapping
+    ;;Execute
+    :license-name m/string-field-mapping
+    :license-name-lowercase m/string-field-mapping
+    :constraints m/string-field-mapping
+    :constraints-lowercase m/string-field-mapping
+    :install-documentation m/string-field-mapping
+    :install-documentation-lowercase m/string-field-mapping
+    :install-language m/string-field-mapping
+    :install-language-lowercase m/string-field-mapping
+    :install-memory m/string-field-mapping
+    :install-memory-lowercase m/string-field-mapping
+    :install-version m/string-field-mapping
+    :install-version-lowercase m/string-field-mapping
+    :install-operatingsystem m/string-field-mapping
+    :install-operatingsystem-lowercase m/string-field-mapping
+    :install-time m/string-field-mapping
+    :install-time-lowercase m/string-field-mapping
+    :install-dependency m/string-field-mapping
+    :install-dependency-lowercase m/string-field-mapping
+    ;;SoftwareUsage
+    :softwareusage-type m/string-field-mapping
+    :softwareusage-type-lowercase m/string-field-mapping         
+    ;;Version
+    :version-id            m/string-field-mapping
+    :version-id-lowercase  m/string-field-mapping
+    :parsed-version-id-lowercase m/string-field-mapping
+    :release-date m/date-field-mapping
+    :supersedes m/string-field-mapping
+    :supersedes-lowercase m/string-field-mapping
+    :superseded-by m/string-field-mapping
+    :superseded-by-lowercase m/string-field-mapping
+
+    ;;Contact
+    :contact-person-role m/string-field-mapping
+    :contact-person-role-lowercase m/string-field-mapping
+    :contact-person-firstname m/string-field-mapping
+    :contact-person-firstname-lowercase m/string-field-mapping
+    :contact-person-lastname m/string-field-mapping
+    :contact-person-lastname-lowercase m/string-field-mapping
+    :contact-person-middlename m/string-field-mapping
+    :contact-person-middlename-lowercase m/string-field-mapping
+    :contact-group-role m/string-field-mapping
+    :contact-group-role-lowercase m/string-field-mapping
+    :contact-group-name m/string-field-mapping
+    :contact-group-name-lowercase m/string-field-mapping
+    ;;ScienceKeywords
+    :science-keywords software-science-keywords-field-mapping
+  }
+)
+
 (defmapping deleted-granule-mapping :deleted-granule
   "Defines the elasticsearch mapping for storing granules. These are the
   fields that will be stored in an Elasticsearch document."
@@ -815,6 +961,14 @@
                              {:name "all-collection-revisions"
                               :settings collection-setting-v1}]
                             :mapping collection-mapping}
+               :software {:indexes 
+                          [
+                            {:name "software-v2" 
+                             :settings software-setting-v2}
+                                    
+                            {:name "all-software-revisions"
+                             :settings software-setting-v1}] 
+                          :mapping software-mapping}
                :deleted-granule {:indexes
                                  [{:name "deleted_granules"
                                    :settings deleted-granule-setting}]
@@ -869,7 +1023,16 @@
                                 ;; is used for all-revisions searches.
                                 {:name "all-subscription-revisions"
                                  :settings subscription-setting}]
-                               :mapping subscription-mapping}}})
+                               :mapping subscription-mapping}
+               :concepts {:collection {:collections "1_collections_v2"
+                                       :all-collection-revisions "1_all_collection_revisions"
+                                      }
+                          :software {:software "1_software_v2"
+                                    :all-software-revisions "1_all_software_revisions"}
+                          }
+                          }
+                          }
+                          )
 
 (defn index-set->extra-granule-indexes
   "Takes an index set and returns the extra granule indexes that are configured"
@@ -903,6 +1066,7 @@
                                       first
                                       name))]
      {:collection (get-concept-mapping-fn :collection)
+      :software (get-concept-mapping-fn :software)
       :granule (get-concept-mapping-fn :granule)
       :tag (get-concept-mapping-fn :tag)
       :variable (get-concept-mapping-fn :variable)
@@ -980,6 +1144,16 @@
          ;; Else index to all collection indexes except for the all-collection-revisions index.
          :else (keep (fn [[k v]]
                        (when-not (= :all-collection-revisions (keyword k))
+                         v))
+                     indexes))
+
+       :software
+       (cond
+         target-index-key [(get indexes target-index-key)]
+         all-revisions-index? [(get indexes :all-software-revisions)]
+         ;; Else index to all software indexes except for the all-software-revisions index.
+         :else (keep (fn [[k v]]
+                       (when-not (= :all-software-revisions (keyword k))
                          v))
                      indexes))
 

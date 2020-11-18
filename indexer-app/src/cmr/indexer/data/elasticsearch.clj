@@ -47,6 +47,10 @@
                  (map :transaction-id (:service-associations concept))
                  (map :transaction-id (:tool-associations concept)))))
 
+(defmethod get-elastic-version :software
+  [concept]
+  (:transaction-id concept))
+
 (defmethod get-elastic-version :variable
   [concept]
   (apply max
@@ -78,6 +82,7 @@
   [concept-id revision-id all-revisions-index?]
   (if (and
        (or (= :collection (cs/concept-id->type concept-id))
+           (= :software (cs/concept-id->type concept-id))
            (= :variable (cs/concept-id->type concept-id))
            (= :service (cs/concept-id->type concept-id))
            (= :tool (cs/concept-id->type concept-id))
@@ -119,7 +124,11 @@
         (info "Creating collection index alias.")
         (esi/create-index-alias (context->conn context)
                                 (idx-set/collections-index)
-                                (idx-set/collections-index-alias)))
+                                (idx-set/collections-index-alias))
+        (info "Creating software index alias.")
+        (esi/create-index-alias (context->conn context)
+                                (idx-set/software-index)
+                                (idx-set/software-index-alias)))
 
 
       ;; Compare them to see if they're the same
@@ -148,7 +157,11 @@
         (info "Creating colleciton index alias.")
         (esi/create-index-alias (context->conn context)
                                 (idx-set/collections-index)
-                                (idx-set/collections-index-alias)))
+                                (idx-set/collections-index-alias))
+        (info "Creating software index alias.")
+        (esi/create-index-alias (context->conn context)
+                                (idx-set/software-index)
+                                (idx-set/software-index-alias)))
       (do
         (info "Ignoring upate indexes request because index set is unchanged.")
         (info "Existing index set:" (pr-str existing-index-set))

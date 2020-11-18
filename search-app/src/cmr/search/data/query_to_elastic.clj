@@ -72,6 +72,22 @@
       (merge default-mappings spatial-doc-values-field-mappings)
       default-mappings)))
 
+(defmethod q2e/concept-type->field-mappings :software
+  [_]
+  (let [default-mappings {:provider :provider-id
+                          :version :version-id
+                          :project :project-short-name
+                          :project-sn :project-short-name
+                          :updated-since :revision-date2
+                          :platform :platform
+                          :instrument :instrument
+                          :revision-date :revision-date2
+                          :doi :doi-stored
+                          }]
+      default-mappings
+    )
+)
+
 (def query-field->granule-doc-values-fields-map
   "Defines mappings for any query-fields to Elasticsearch doc-values field names. Note that this
   does not include lowercase field mappings for doc-values fields."
@@ -193,6 +209,15 @@
    :service-type "service-types-lowercase"
    :tool-name "tool-names-lowercase"
    :tool-type "tool-types-lowercase"})
+
+(defmethod q2e/field->lowercase-field-mappings :software
+  [_]
+  {:provider "provider-id-lowercase"
+   :version "version-id-lowercase"
+   :project "project-sort-name-lowercase"
+   :platform "platform-lowercase"
+   :instrument "instrument-lowercase"
+   })
 
 (defmethod q2e/field->lowercase-field-mappings :variable
   [_]
@@ -323,6 +348,29 @@
          {:query {:bool {:must (eq/match-all)
                          :filter core-query}}})))))
 
+(defmethod q2e/query->elastic :software
+  [query]
+  (let [boosts (:boosts query)
+        {:keys [concept-type condition]} (query-expense/order-conditions query)
+        core-query (q2e/condition->elastic condition concept-type)]
+    (let [keywords (keywords-in-query query)]
+      (if-let [all-keywords (seq (concat (:keywords keywords) (:field-keywords keywords)))]
+       (do
+        (validate-keyword-wildcards all-keywords)
+        ;; Forces score to be returned even if not sorting by score.
+        {:track_scores true
+         ;; function_score query allows us to compute a custom relevance score for each document
+         ;; matched by the primary query. The final document relevance is given by multiplying
+         ;; a boosting term for each matching filter in a set of filters.
+         :query {:function_score {:score_mode :multiply
+                                  :functions (k2e/keywords->boosted-elastic-filters keywords boosts)
+                                  :query {:bool {:must (eq/match-all)
+                                                     :filter core-query}}}}})
+       (if boosts
+         (errors/throw-service-errors :bad-request ["Relevance boosting is only supported for keyword queries"])
+         {:query {:bool {:must (eq/match-all)
+                             :filter core-query}}})))))
+
 (defmethod q2e/concept-type->sort-key-map :collection
   [_]
   {:short-name :short-name-lowercase
@@ -335,6 +383,50 @@
    :sensor :sensor-sn-lowercase
    :score :_score
    :usage-score :usage-relevancy-score})
+
+(defmethod q2e/concept-type->sort-key-map :software
+  [_]
+  {
+    :provider :provider-id-lowercase
+    :revision-date :revision-date2
+    ;Software
+    :short-name :short-name-lowercase
+    :entry-title :entry-title-lowercase
+    :project-short-name :project-short-name-lowercase
+    :project-long-name :project-long-name-lowercase
+    :publisher :publisher-lowercase
+    :citation :citation
+    ;Metadata
+    :update-time :update-time
+    :language :language-lowercase
+    :publish-time :publish-time
+    ;Software Description
+    :platform :platform-lowercase
+    :instrument :instrument-lowercase
+    ;:inputdataset :inputdataset
+    :inputvariable-name :inputvariable-name
+    ;Execute
+    :install-language :install-language-lowercase
+    :install-version :install-version
+    ;Version
+    :version-id :parsed-version-id-lowercase ; Use parsed for sorting
+    :release-date :release-date
+    ;Contact
+    :contact-person-role :contact-person-role
+    :contact-person-firstname :contact-person-firstname-lowercase
+    :contact-person-lastname :contact-person-lasttname-lowercase
+    :contact-person-middlename :contact-person-middletname-lowercase
+    :contact-group-role :contact-group-role
+    :contact-group-name :contact-group-name-lowercase    
+    ;Science keywords
+    :science-keywords.category :science-keywords.category-lowercase
+    :science-keywords.topic :science-keywords.topic-lowercase
+    :science-keywords.term :science-keywords.term-lowercase
+    :science-keywords.variable-level-1 :science-keywords.variable-level-1-lowercase
+    :science-keywords.variable-level-2 :science-keywords.variable-level-2-lowercase
+    :science-keywords.variable-level-3 :science-keywords.variable-level-3-lowercase
+    :science-keywords.detailed-variable :science-keywords.detailed-variable-lowercase
+   })
 
 (defmethod q2e/concept-type->sort-key-map :tag
   [_]
@@ -420,6 +512,19 @@
    {(q2e/query-field->elastic-field :concept-seq-id :collection) {:order "asc"}}
    {(q2e/query-field->elastic-field :revision-id :collection) {:order "desc"}}])
 
+(def software-latest-sub-sort-fields
+  "This defines the sub sort fields for a latest revision sortware search. Short name and version id
+   are included for better relevancy with search results where all the other sort keys were identical."
+  [{(q2e/query-field->elastic-field :short-name :software) {:order "asc"}}
+   {(q2e/query-field->elastic-field :parsed-version-id-lowercase :software) {:order "desc"}}
+   {(q2e/query-field->elastic-field :concept-seq-id :software) {:order "asc"}}
+   {(q2e/query-field->elastic-field :revision-id :software) {:order "desc"}}])
+
+(def software-all-revision-sub-sort-fields
+  "Defines the sub sort fields for an all revisions service search."
+  [{(q2e/query-field->elastic-field :concept-id :software) {:order "asc"}}
+   {(q2e/query-field->elastic-field :revision-id :software) {:order "desc"}}])
+
 (def variable-latest-sub-sort-fields
   "This defines the sub sort fields for a latest revision variable search."
   [{(q2e/query-field->elastic-field :name :variable) {:order "asc"}}
@@ -470,6 +575,21 @@
         sub-sort-fields (if (:all-revisions? query)
                           (all-revision-sub-sort-fields :collection)
                           collection-latest-sub-sort-fields)
+        ;; We want the specified sort then to sub-sort by the score.
+        ;; Only if neither is present should it then go to the default sort.
+        specified-score-combined (seq (concat specified-sort score-sort-order))]
+    (concat (or specified-score-combined default-sort) sub-sort-fields)))
+
+(defmethod q2e/query->sort-params :software
+  [query]
+  (let [{:keys [concept-type sort-keys]} query
+        ;; If the sort keys are given as parameters then keyword-sort will not be used.
+        score-sort-order (elastic-relevancy-scoring/score-sort-order query)
+        specified-sort (q2e/sort-keys->elastic-sort concept-type sort-keys)
+        default-sort (q2e/sort-keys->elastic-sort concept-type (q/default-sort-keys concept-type))
+        sub-sort-fields (if (:all-revisions? query)
+                          (all-revision-sub-sort-fields :software)
+                          software-latest-sub-sort-fields)
         ;; We want the specified sort then to sub-sort by the score.
         ;; Only if neither is present should it then go to the default sort.
         specified-score-combined (seq (concat specified-sort score-sort-order))]

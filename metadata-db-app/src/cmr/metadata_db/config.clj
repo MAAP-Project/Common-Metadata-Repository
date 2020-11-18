@@ -57,6 +57,7 @@
   "Maps concept types to a function that returns the name of the exchange to publish the message to."
   {:granule ingest-exchange-name
    :collection ingest-exchange-name
+   :software ingest-exchange-name
    :tag ingest-exchange-name
    :tag-association ingest-exchange-name
    :service ingest-exchange-name

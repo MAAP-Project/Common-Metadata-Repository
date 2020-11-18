@@ -14,7 +14,7 @@
    [cmr.search.services.query-execution.granule-counts-results-feature :as gcrf]
    [cmr.search.services.url-helper :as url]))
 
-(doseq [concept-type [:collection :granule]]
+(doseq [concept-type [:collection :software :granule]]
   (defmethod elastic-search-index/concept-type+result-format->fields [concept-type :json]
     [concept-type query]
     (elastic-search-index/concept-type+result-format->fields
@@ -92,6 +92,36 @@
     ;; remove entries with nil value
     (util/remove-nil-keys result)))
 
+(defmethod atom-reference->json :software
+  [results concept-type reference]
+  (let [
+        {:keys [id title short-name version-id updated
+                original-format data-center archive-center start-date end-date
+                atom-links associated-difs online-access-flag browse-flag shapes
+                organizations
+                has-formats]} reference
+        shape-result (atom-spatial/shapes->json shapes)
+        result (merge {:id id
+                       :title title
+                       :updated updated
+                       :short_name short-name
+                       :version_id version-id
+                       :original_format original-format
+                       :data_center data-center
+                       :archive_center archive-center
+                       :organizations organizations
+                       :time_start start-date
+                       :time_end end-date
+                       :dif_ids associated-difs
+                       :online_access_flag online-access-flag
+                       :browse_flag browse-flag
+                       :has_formats has-formats
+                       :links (seq (map atom/atom-link->attribute-map atom-links))
+                       }
+                      shape-result)]
+    ;; remove entries with nil value
+    (util/remove-nil-keys result)))
+
 (defmethod atom-reference->json :granule
   [results concept-type reference]
   (let [{:keys [id title updated dataset-id producer-gran-id size original-format
@@ -162,7 +192,7 @@
                                               (:concept-type query)
                                               (first (:items results)))))
 
-(doseq [concept-type [:collection :granule]]
+(doseq [concept-type [:collection :software :granule]]
   (defmethod qs/search-results->response [concept-type :json]
     [context query results]
     (search-results->response context query results))

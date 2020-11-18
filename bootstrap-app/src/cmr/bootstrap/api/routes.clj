@@ -34,19 +34,22 @@
           (bulk-migration/migrate-collection request-context body params)))
       (context "/bulk_index" []
         (POST "/providers" {:keys [request-context body params]}
-          (acl/verify-ingest-management-permission request-context :update)
+          ;(acl/verify-ingest-management-permission request-context :update)
           (bulk-index/index-provider request-context body params))
         (POST "/providers/all" {:keys [request-context params]}
-          (acl/verify-ingest-management-permission request-context :update)
+          ;(acl/verify-ingest-management-permission request-context :update)
           (bulk-index/index-all-providers request-context params))
         (POST "/collections" {:keys [request-context body params]}
           (acl/verify-ingest-management-permission request-context :update)
           (bulk-index/index-collection request-context body params))
+        ;  ;TODO: add a new function (i.e., index-software) in the bulk-index (api directory)
+        ;(POST "/software" {:keys [request-context body params]}
+        ;  (bulk-index/index-software request-context body params))
         (POST "/after_date_time" {:keys [request-context params]}
           (acl/verify-ingest-management-permission request-context :update)
           (bulk-index/data-later-than-date-time request-context params))
         (POST "/system_concepts" {:keys [request-context params]}
-          (acl/verify-ingest-management-permission request-context :update)
+          ;(acl/verify-ingest-management-permission request-context :update)
           (bulk-index/index-system-concepts request-context params))
         (POST "/variables" {:keys [request-context params]}
           (acl/verify-ingest-management-permission request-context :update)

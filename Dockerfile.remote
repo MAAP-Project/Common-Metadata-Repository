@@ -1,0 +1,73 @@
+#FROM maven:3.6.2-jdk-8
+FROM clojure:openjdk-8-lein
+
+RUN apt-get update
+RUN apt-get install git --yes
+RUN wget -O /bin/lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+RUN chmod a+x /bin/lein
+RUN /bin/lein
+RUN apt-get install maven --yes
+#RUN apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common --yes
+#RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#RUN apt-key fingerprint 0EBFCD88
+#RUN apt-get install docker-ce docker-ce-cli containerd.io --yes
+#RUN apt-get install docker.io --yes
+#RUN systemctl start docker
+#RUN docker run -v /var/run/docker.sock:/var/run/docker.sock ...
+#RUN bash service docker start
+
+RUN apt-get -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+
+RUN apt-get update
+RUN apt-get -y install docker-ce
+RUN bash service docker start
+RUN service docker start
+#RUN docker run -privileged -d -p 1234 -e PORT=1234 jpetazzo/dind
+
+# TODO ARG vars at runtime 
+ARG CMR_DEV_SYSTEM_DB_TYPE
+ARG CMR_PASSWORD
+ARG CMR_USER
+ARG CMR_BOOTSTRAP_PASSWORD
+ARG CMR_INGEST_PASSWORD
+ARG CMR_METADATA_DB_PASSWORD
+ARG CMR_DB_URL
+ARG CMR_SYS_DBA_USERNAME
+ARG CMR_SYS_DBA_PASSWORD
+ARG CMR_ECHO_REST_PROTOCOL
+ARG CMR_ECHO_REST_PORT
+ARG CMR_ECHO_REST_HOST
+ARG CMR_ECHO_REST_CONTEXT
+ARG CMR_ECHO_SYSTEM_TOKEN
+ARG CMR_PROVIDERS_CACHE_TIME_SECONDS
+
+ENV CMR_DEV_SYSTEM_DB_TYPE=$CMR_DEV_SYSTEM_DB_TYPE
+ENV CMR_PASSWORD=$CMR_PASSWORD
+ENV CMR_USER=$CMR_USER
+ENV CMR_BOOTSTRAP_PASSWORD=$CMR_BOOTSTRAP_PASSWORD
+ENV CMR_INGEST_PASSWORD=$CMR_INGEST_PASSWORD
+ENV CMR_METADATA_DB_PASSWORD=$CMR_METADATA_DB_PASSWORD
+ENV CMR_DB_URL=$CMR_DB_URL
+ENV CMR_SYS_DBA_USERNAME=$CMR_SYS_DBA_USERNAME
+ENV CMR_SYS_DBA_PASSWORD=$CMR_SYS_DBA_PASSWORD
+ENV CMR_ECHO_REST_PROTOCOL=$CMR_ECHO_REST_PROTOCOL
+ENV CMR_ECHO_REST_PORT=$CMR_ECHO_REST_PORT
+ENV CMR_ECHO_REST_HOST=$CMR_ECHO_REST_HOST
+ENV CMR_ECHO_REST_CONTEXT=$CMR_ECHO_REST_CONTEXT
+ENV CMR_ECHO_SYSTEM_TOKEN=$CMR_ECHO_SYSTEM_TOKEN
+ENV CMR_PROVIDERS_CACHE_TIME_SECONDS=$CMR_PROVIDERS_CACHE_TIME_SECONDS
+
+COPY . /code
+WORKDIR /code
+RUN ./bin/cmr install oracle-libs
+# ASSUMES profiles.clj has been updated
+RUN apt-get install make
+RUN ./bin/cmr setup profile
+RUN ./bin/cmr setup dev
+RUN ./bin/cmr build uberjar dev-system
+RUN ./bin/cmr setup db
+
+CMD "./bin/cmr" "start" "uberjar" "dev-system"
+
